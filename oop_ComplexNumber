@@ -1,0 +1,106 @@
+from math import sqrt, pow
+class ComplexNumber:
+    def __init__(self, real_part = 0, imaginary_part = 0):
+        if isinstance(real_part, str) and isinstance(imaginary_part, str):
+            raise ValueError('Invalid value for real and imaginary part')
+        if type(real_part) == str:
+             raise ValueError('Invalid value for real part')
+        self._real_part = real_part
+        if type(imaginary_part) == str:
+             raise ValueError('Invalid value for imaginary part')
+        self._imaginary_part = imaginary_part
+        
+    @property
+    def real_part(self):
+        return self._real_part
+    
+    @property
+    def imaginary_part(self):
+        return self._imaginary_part
+    
+    def conjugate(self):
+        return __class__(self.real_part,-self.imaginary_part)
+    
+    def __str__(self):
+        return f'{self.real_part}{self.imaginary_part:+}i'
+    
+    def __add__(self, other):
+        real = self.real_part + other.real_part
+        imag = self.imaginary_part + other.imaginary_part
+        return ComplexNumber(real, imag)
+    
+    def __sub__(self, other):
+        real = self.real_part - other.real_part
+        imag = self.imaginary_part - other.imaginary_part
+        return ComplexNumber(real, imag)
+        
+    def __mul__(self, other):
+        real = (self.real_part * other.real_part) - (self.imaginary_part * other.imaginary_part)
+        imag = (self.real_part * other.imaginary_part) + (other.real_part * self.imaginary_part)
+        return ComplexNumber(real, imag)
+    
+    def __truediv__(self, other):
+        if other.real_part == 0 and other.imaginary_part == 0:
+            raise ZeroDivisionError('division by zero')
+        intermitent_result = self * other.conjugate()
+        denominator = pow(other.real_part, 2) + pow(other.imaginary_part, 2)
+        intermitent_result._real_part /= denominator
+        intermitent_result._imaginary_part /= denominator
+        return intermitent_result
+    
+    def __abs__(self):
+        return round(sqrt(pow(self.real_part, 2) + pow(self.imaginary_part, 2)),3)
+        
+    def __eq__(self, other):
+        return (self.real_part == other.real_part) and (self.imaginary_part == other.imaginary_part)
+        
+  -------------------------------------------------------------------------------------------------------------------------
+  
+  
+  Tests ran at 20 Apr 11 09 AM
+
+39 tests passed out of 39 tests.
+
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_initiating_for_given_values: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_initiating_for_given_float_values: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_initiating_creating_two_instance: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_for_different_values: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_when_only_one_value_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_when_no_value_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_when_real_part_is_invalid: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_when_imaginary_part_is_invalid: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_initiating_when_both_real_and_imaginary_part_are_invalid: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_for_conjugate: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_for_conjugate_for_negative_number: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_conjugate_when_there_is_only_real_part: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_conjugate_when_there_is_only_imaginary_part: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_addition: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_addition_with_zero: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_addition_given_negative_numbers: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_addition_when_only_one_part_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_subtraction: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_subtraction_with_zero: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_subtraction_given_negative_numbers: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_subtraction_when_only_one_part_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_multiplication: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_multiplication_with_zero: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_multiplication_given_negative_numbers: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_multiplication_when_only_one_part_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_division: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_division_with_zero: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_when_division_given_negative_numbers: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_division_when_only_one_part_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_numbers_absolute: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_absolute_when_only_real_part_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_absolute_when_only_imaginary_part_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_equality: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_inequality: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_equality_when_one_value_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_equality_when_value_is_empty: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_to_string: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_to_string_when_one_value_is_given: passed
+test_b1c0ea81-0abf-4c10-b44f-f67510e48d96_complex_numbers.py::test_complex_number_to_string_when_real_part_is_zero: passed
+
+
+Errors: 0 errors
+

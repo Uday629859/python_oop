@@ -1,7 +1,9 @@
+from operator import eq, lt, le, gt, ge
 class Store:
     
     def __init__(self, item = None):
-        self.items = []
+        self._items = []
+        self.ops = {'EQ':eq, 'GT':gt, 'GTE':ge, 'LT': lt, 'LTE':le} 
         pass
     
     def add_item(self, item = None):
@@ -9,28 +11,48 @@ class Store:
         
     def filter(self, query_obj):
         store = Store()
-        filtered_obj = eval('Query.' + query_obj.operation + '(query_obj, self.items)')
-        for item in filtered_obj:
-            store.add_item(item)
+        if query_obj.operation in self.ops.keys():
+            filtered_obj = self.func(query_obj, query_obj.operation)
+        else:
+            filtered_obj = eval('self.' + query_obj.operation + '(query_obj)')
+        [store.add_item(item) for item in filtered_obj]
         return store
      
     def exclude(self, query_obj):
         store = Store()
-        filtered_obj = eval('Query.' + query_obj.operation + '(query_obj, self.items)')
-        for item in self.items:
-            if item not in filtered_obj:
-                store.add_item(item)
+        if query_obj.operation in self.ops.keys():
+            filtered_obj = self.func(query_obj, query_obj.operation)
+        else:
+            filtered_obj = eval('self.' + query_obj.operation + '(query_obj)')
+        [store.add_item(item) for item in self.items if item not in filtered_obj]
         return store
     
     def count(self):
         return len(self.items)
     
+    @property
+    def items(self):
+        return self._items
+    
+    def func(self, query_obj, op):
+        return [item for item in self.items if self.ops[op](getattr(item, query_obj.field), query_obj.value)]
+    
+    def STARTS_WITH(self, query_obj):
+        return [item for item in self.items if getattr(item, query_obj.field).startswith(query_obj.value)]
+    
+    def ENDS_WITH(self, query_obj):
+        return [item for item in self.items if getattr(item, query_obj.field).endswith(query_obj.value)]
+    
+    def CONTAINS(self, query_obj):
+        return [item for item in self.items if query_obj.value in getattr(item, query_obj.field)]
+    
+    def IN(self, query_obj):
+        return [item for item in self.items if getattr(item, query_obj.field) in query_obj.value]
+    
     def __str__(self):
-        results = ''
         if self.items == []:
             return f'No items'
-        results += '\n'.join(map(str, self.items))
-        return results
+        return '\n'.join(map(str, self.items))
         
 
 class Item:
@@ -79,76 +101,11 @@ class Query:
     @property
     def operation(self):
         return self._operation
-    
-    
+
     def __str__(self):
         return f'{self.field} {self.operation} {self.value}'
-    
-    def EQ(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.'+ self.field) == self.value:
-                obj.append(item)
-        return obj
-    
-    def GT(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.' + self.field) > self.value:
-                obj.append(item)
-        return obj
-    
-    def GTE(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.' + self.field) >= self.value:
-                obj.append(item)
-        return obj
-    
-    def LT(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.' + self.field) < self.value:
-                obj.append(item)
-        return obj
-    
-    def LTE(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.' + self.field) <= self.value:
-                obj.append(item)
-        return obj
-    
-    def STARTS_WITH(self, items_list):
-        obj = []
-        length = len(self.value)
-        for item in items_list:
-            if eval('item.' + self.field)[:length] == self.value:
-                obj.append(item)
-        return obj
-    
-    def ENDS_WITH(self, items_list):
-        obj = []
-        length = len(self.value) + 1
-        for item in items_list:
-            if eval('item.' + self.field)[:-length:-1] == self.value[::-1]:
-                obj.append(item)
-        return obj
-    
-    def CONTAINS(self, items_list):
-        obj = []
-        for item in items_list:
-            if self.value in eval('item.' + self.field):
-                obj.append(item)
-        return obj
-    
-    def IN(self, items_list):
-        obj = []
-        for item in items_list:
-            if eval('item.' + self.field) in self.value:
-                obj.append(item)
-        return obj
-        
+
+            
 --------------------------------------------------------------------------------------------------------------------------
 
 Tests ran at 21 Apr 02 39 PM
